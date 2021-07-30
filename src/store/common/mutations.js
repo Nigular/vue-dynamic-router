@@ -7,13 +7,11 @@ export default {
   },
   setCurrentRouterTreeLink(state, data) {
     state.currentRouterTreeLink = data;
-    let target = data.filter((item) => {
-      return item.level === 1;
-    });
-    if (target) {
-      state.currentTopMenuId = target[0].id;
-    } else {
-      state.currentTopMenuId = "";
-    }
+  },
+  PermissionList(state, data) {
+    state.currentBtnPermissionList = data;
+  },
+  setCurrentBtnPermissionList(state, data) {
+    state.currentBtnPermissionList = data;
   },
 };

@@ -53,7 +53,7 @@ export default {
     async findActiveMenu(path) {
       //由于顶部菜单列表是异步的，需要等待结果才能进行计算
       let topMenuList = await this.checkCurrentTopMenuList();
-      //记录整个路由在树节点里的链路
+      //记录当前路由在整个树节点里的链路
       let treeLink = [];
       /**
        * @param tree 树结构菜单
@@ -81,7 +81,7 @@ export default {
           return data.url === path;
         });
         if (output) {
-          //如果找到了这个树下拥有这个节点，则区顶级节点的路由为topId
+          //如果找到了这个树下拥有这个节点，则拿到顶级节点的路由id
           this.currentTopMenuId = topMenuList[k].id;
           //把顶级也加到链路
           treeLink.push(topMenuList[k]);
@@ -90,6 +90,10 @@ export default {
           });
           console.log(treeLink);
           this.$store.commit("common/setCurrentRouterTreeLink", treeLink);
+          this.$store.commit(
+            "common/setCurrentTopMenuId",
+            this.currentTopMenuId
+          );
           return;
         }
       }
@@ -97,14 +101,22 @@ export default {
     checkCurrentTopMenuList() {
       let that = this;
       return new Promise(function (resolve) {
-        let loopFind = setTimeout(() => {
-          if (that.currentTopMenuList === undefined) {
-            loopFind();
-          } else {
-            //等找到了顶部列表，才结束循环，返回出去
-            resolve(that.currentTopMenuList);
-          }
-        }, 100);
+        let timeOut = 0;
+        const loopFind = () => {
+          setTimeout(() => {
+            timeOut++;
+            if (timeOut > 10) {
+              resolve([]);
+            }
+            if (that.currentTopMenuList.length === 0) {
+              loopFind();
+            } else {
+              //等找到了顶部列表，才结束循环，返回出去
+              resolve(that.currentTopMenuList);
+            }
+          }, 100);
+        };
+        loopFind();
       });
     },
   },

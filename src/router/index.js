@@ -40,7 +40,7 @@ const routes = [...Indexs];
 //动态加载的路由
 const otherRouhes = [...service, ...scenic, ...product, ...order, ...setting];
 
-console.log(otherRouhes);
+//console.log(otherRouhes);
 
 const router = new VueRouter({
   routes,
@@ -48,7 +48,9 @@ const router = new VueRouter({
 
 getAsyncRoutes(otherRouhes).then((asyncRoutes) => {
   //动态添加路由
-  router.addRoutes(asyncRoutes);
+  asyncRoutes.forEach((item) => {
+    router.addRoute(item);
+  });
   router.addRoute({
     path: "*",
     redirect: "/404",

@@ -11,6 +11,9 @@ export const getAsyncRoutes = (otherRouhes) => {
       let routes = filterRoutes(otherRouhes, currentTopMenuList);
       //同步到vuex
       store.commit("common/setCurrentTopMenuList", currentTopMenuList);
+      //筛选所有可访问的按钮权限标记
+      let allowMenuKeys = filterMenukey(res.data);
+      store.commit("common/setCurrentBtnPermissionList", allowMenuKeys);
       resolve(routes);
     });
   });
@@ -51,15 +54,16 @@ function multilevelMenuSort(data, key) {
 function filterRoutes(routes, menuTree) {
   let allowRoutes = [];
   function tree(newData) {
-    for (let i in newData) {
-      if (newData[i].url) allowRoutes.push(newData[i].url);
-      if (newData[i].children && newData[i].children.length) {
+    for (const data of newData) {
+      if (data.url) allowRoutes.push(data.url);
+      if (data.children && data.children.length) {
         //如果有子菜单，继续递归
-        tree(newData[i].children);
+        tree(data.children);
       }
     }
   }
   tree(menuTree);
+
   //把拿到的数组去重
   let arr = [...new Set(allowRoutes)];
   //把路由跟权限菜单比对，过滤出拥有权限的路由
@@ -67,5 +71,24 @@ function filterRoutes(routes, menuTree) {
     return arr.includes(item.path);
   });
   //返回可访问的路由
+  return output;
+}
+
+/**
+ * @description 筛选出所有menukey
+ */
+function filterMenukey(data) {
+  let output = [];
+  function findChild(target) {
+    target.forEach((item) => {
+      if (item.menuKey) {
+        output.push(item.menuKey);
+      }
+      if (item.children && item.children.length) {
+        findChild(item.children);
+      }
+    });
+  }
+  findChild(data);
   return output;
 }
