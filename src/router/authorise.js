@@ -1,13 +1,8 @@
 import axios from "axios";
 import store from "../store/index";
-import Storage from "@/utils/storage";
 
 //获取到接口的菜单权限，跟本地的路由匹对，返回可访问的路由
 export const getAsyncRoutes = (otherRouhes) => {
-  let tid = Storage.session.get("__currentTopMenuId__");
-  if (tid) {
-    store.commit("common/setCurrentTopMenuId", tid);
-  }
   return new Promise(function (resolve) {
     axios.get("/api/menulist").then((res) => {
       //把菜单按sort字段排序一下

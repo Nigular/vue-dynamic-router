@@ -1,12 +1,19 @@
-import Storage from "@/utils/storage";
-
 export default {
   setCurrentTopMenuList(state, data) {
     state.currentTopMenuList = data;
   },
   setCurrentTopMenuId(state, id) {
     state.currentTopMenuId = id;
-    //存进去session，实现刷新后的数据持久化
-    Storage.session.set("__currentTopMenuId__", id);
+  },
+  setCurrentRouterTreeLink(state, data) {
+    state.currentRouterTreeLink = data;
+    let target = data.filter((item) => {
+      return item.level === 1;
+    });
+    if (target) {
+      state.currentTopMenuId = target[0].id;
+    } else {
+      state.currentTopMenuId = "";
+    }
   },
 };
