@@ -27,6 +27,9 @@ const Indexs = [
       title: "运营平台",
     },
   },
+];
+//404路由(默认存在)
+const notFoundRoute = [
   {
     path: "/404",
     name: "notFound",
@@ -35,10 +38,17 @@ const Indexs = [
 ];
 
 //默认能访问的路由
-const routes = [...Indexs];
+const routes = [...notFoundRoute];
 
 //动态加载的路由
-const otherRouhes = [...service, ...scenic, ...product, ...order, ...setting];
+const otherRouhes = [
+  ...Indexs,
+  ...service,
+  ...scenic,
+  ...product,
+  ...order,
+  ...setting,
+];
 
 //console.log(otherRouhes);
 
@@ -46,11 +56,12 @@ const router = new VueRouter({
   routes,
 });
 
+//异步获计算能访问的动态路由后，再添加动态路由
 getAsyncRoutes(otherRouhes).then((asyncRoutes) => {
-  //动态添加路由
   asyncRoutes.forEach((item) => {
     router.addRoute(item);
   });
+  //所有页面找不到时
   router.addRoute({
     path: "*",
     redirect: "/404",

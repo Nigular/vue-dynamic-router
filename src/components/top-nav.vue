@@ -25,12 +25,10 @@ import { mapGetters } from "vuex";
 export default {
   name: "top-nav",
   data() {
-    return {
-      currentTopMenuId: "",
-    };
+    return {};
   },
   computed: {
-    ...mapGetters("common", ["currentTopMenuList"]),
+    ...mapGetters("common", ["currentTopMenuList", "currentTopMenuId"]),
   },
   watch: {
     "$route.path": {
@@ -51,8 +49,20 @@ export default {
       }
     },
     async findActiveMenu(path) {
-      //由于顶部菜单列表是异步的，需要等待结果才能进行计算
+      //由于第一次访问时，顶部菜单列表是异步的，需要等待结果才能进行计算
       let topMenuList = await this.checkCurrentTopMenuList();
+      //首页特殊处理
+      if (path === "/") {
+        let target = topMenuList.filter((item) => {
+          return item.url === "/";
+        });
+        if (target && target.length) {
+          this.$store.commit("common/setCurrentRouterTreeLink", [target[0].id]);
+          this.$store.commit("common/setCurrentTopMenuId", target[0].id);
+        }
+        return;
+      }
+      console.log(topMenuList);
       //记录当前路由在整个树节点里的链路
       let treeLink = [];
       /**
@@ -82,20 +92,31 @@ export default {
         });
         if (output) {
           //如果找到了这个树下拥有这个节点，则拿到顶级节点的路由id
-          this.currentTopMenuId = topMenuList[k].id;
+          this.$store.commit("common/setCurrentTopMenuId", topMenuList[k].id);
           //把顶级也加到链路
           treeLink.push(topMenuList[k]);
           treeLink = treeLink.map(({ id, name, level, url }) => {
             return { id, name, level, url };
           });
-          console.log(treeLink);
+          //console.log(treeLink);
           this.$store.commit("common/setCurrentRouterTreeLink", treeLink);
-          this.$store.commit(
-            "common/setCurrentTopMenuId",
-            this.currentTopMenuId
-          );
-          return;
+          break;
         }
+      }
+
+      //处理从登录页面进来的首次跳转
+      if (this.$route.query.from === "selectPage") {
+        let firstGoPage = "/";
+        let level2 = this.currentTopMenuList[0].children;
+        if (level2 && level2.length) {
+          let level3 = level2[0].children;
+          console.log(level3);
+          if (level3 && level3.length) {
+            //找到第一个3级菜单的第一个rul
+            if (level3[0].url) firstGoPage = level3[0].url;
+          }
+        }
+        this.$router.push(firstGoPage);
       }
     },
     checkCurrentTopMenuList() {

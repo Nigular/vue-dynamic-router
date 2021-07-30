@@ -9,7 +9,7 @@ export default {
     let target = state.currentRouterTreeLink.filter((item) => {
       return item.level === 3;
     });
-    if (target) {
+    if (target && target.length) {
       return target[0].id;
     } else {
       return null;
