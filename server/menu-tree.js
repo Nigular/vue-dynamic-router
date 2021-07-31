@@ -1,15 +1,15 @@
 const menus = [
-  // {
-  //   id: "1175052218931981021",
-  //   parentId: 0,
-  //   name: "首页",
-  //   menuKey: "",
-  //   url: "/",
-  //   level: 1,
-  //   sort: 1,
-  //   menuChannelType: 1,
-  //   children: [],
-  // },
+  {
+    id: "1175052218931981021",
+    parentId: 0,
+    name: "首页",
+    menuKey: "",
+    url: "/",
+    level: 1,
+    sort: 1,
+    menuChannelType: 1,
+    children: [],
+  },
   {
     id: "1275052218931982971",
     parentId: 0,

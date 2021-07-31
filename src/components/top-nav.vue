@@ -107,13 +107,13 @@ export default {
       //处理从登录页面进来的首次跳转
       if (this.$route.query.from === "selectPage") {
         let firstGoPage = "/";
-        let level2 = this.currentTopMenuList[0].children;
+        let level2 = this.currentTopMenuList[0]?.children;
         if (level2 && level2.length) {
-          let level3 = level2[0].children;
-          console.log(level3);
+          let level3 = level2[0]?.children;
+          //console.log(level3);
           if (level3 && level3.length) {
             //找到第一个3级菜单的第一个rul
-            if (level3[0].url) firstGoPage = level3[0].url;
+            if (level3[0]?.url) firstGoPage = level3[0].url;
           }
         }
         this.$router.push(firstGoPage);
